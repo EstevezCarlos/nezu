@@ -1,4 +1,4 @@
-export function def(name, template) {
+export function def(name, template, display='flex', boxSizing='border-box') {
     const observedAttributes = [
         ...new Set(
             [...template.matchAll(/{{([^\s{}]+)}}/g)]
@@ -7,13 +7,28 @@ export function def(name, template) {
     ]
 
     customElements.define(name, class Component extends HTMLElement {
+
         static get observedAttributes() {
             return observedAttributes
         }
 
         constructor() {
             super()
-            this.attachShadow({ mode: "open" })
+
+            this.attachShadow({ mode: "open" }).innerHTML = /*html*/`
+                <style>
+                    :host {
+                        display: ${display};
+                        box-sizing: ${boxSizing};
+                    }
+
+                    :host([hidden]) {
+                        display: none;
+                    }
+                </style>
+
+                <slot></slot>
+            `
         }
 
         connectedCallback() {
@@ -36,7 +51,7 @@ export function def(name, template) {
                 )
             }
 
-            this.shadowRoot.innerHTML = html
+            this.innerHTML = html
         }
     })
 }

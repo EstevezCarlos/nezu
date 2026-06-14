@@ -1,0 +1,2 @@
+- [x] Make all elements flex by default
+- [x] make option to create inline element
